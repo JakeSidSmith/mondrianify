@@ -3,7 +3,7 @@ const path = require('path');
 
 const UTF8 = 'utf8';
 
-const MATCHES_THIS_LINK = /(<a\shref=")[^"]*?(">this\slink<\/a>)/;
+const MATCHES_URL = /(```)[^`]*?(```)/;
 
 const MONDRIANIFY_PATH = path.join(__dirname, '../mondrianify.js');
 const README_PATH = path.join(__dirname, '../README.md');
@@ -13,6 +13,6 @@ const readmeContents = fs.readFileSync(README_PATH, UTF8);
 
 const link = `javascript:${encodeURIComponent(mondrianifyContents)}`;
 
-const newReadmeContents = readmeContents.replace(MATCHES_THIS_LINK, `$1${link}$2`);
+const newReadmeContents = readmeContents.replace(MATCHES_URL, `$1\n${link}\n$2`);
 
 fs.writeFileSync(README_PATH, newReadmeContents, UTF8);
