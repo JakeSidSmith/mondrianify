@@ -1,4 +1,4 @@
-/* global HTMLBodyElement, Text, Comment */
+/* global HTMLBodyElement, Text, Comment, HTMLImageElement */
 
 (function () {
 
@@ -6,7 +6,8 @@
     ELEMENT: 'ELEMENT',
     BODY: 'BODY',
     TEXT: 'TEXT',
-    COMMENT: 'COMMENT'
+    COMMENT: 'COMMENT',
+    IMAGE: 'IMAGE'
   };
 
   const MATCHES_RGBA = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*((?:\d*\.)?\d+))?\)/;
@@ -33,6 +34,64 @@
 
   function isTransparent (color) {
     return extractRGBA(color).a === 0;
+  }
+
+  function roundColorPart (value) {
+    const mod = value % 5;
+    return value - mod + Math.round(mod / 5) * 5;
+  }
+
+  function getColorCounts (img) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 100;
+    canvas.height = 100 * img.height / img.width;
+    const ctx = canvas.getContext('2d');
+
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    const colorCounts = {};
+
+    for (let x = 0; x < canvas.width; x += 1) {
+      for (let y = 0; y < canvas.height; y += 1) {
+        const data = ctx.getImageData(x, y, 1, 1).data;
+
+        if (data[3] > 0) {
+          const r = roundColorPart(data[0]);
+          const g = roundColorPart(data[1]);
+          const b = roundColorPart(data[2]);
+          const a = Math.round(data[3] / 255 * 10) / 10;
+
+          const rounded = `rgba(${r},${g},${b},${a})`;
+
+          if (rounded in colorCounts) {
+            colorCounts[rounded] = colorCounts[rounded] + 1;
+          } else {
+            colorCounts[rounded] = 1;
+          }
+        }
+      }
+    }
+
+    return colorCounts;
+  }
+
+  function getProminentColor (img) {
+    const colorCounts = getColorCounts(img);
+    const colors = Object.keys(colorCounts);
+
+    if (!colors.length) {
+      throw new Error('No valid colors');
+    }
+
+    let prominentColor;
+
+    colors.forEach((color) => {
+      if (typeof prominentColor === 'undefined' || colorCounts[color] > colorCounts[prominentColor]) {
+        prominentColor = color;
+      }
+    });
+
+    return prominentColor;
   }
 
   function drawNodes (nodeData) {
@@ -156,13 +215,22 @@
           };
           type = TYPES.COMMENT;
           break;
-        default:
+        case HTMLImageElement.prototype.constructor:
+          rect = node.getBoundingClientRect();
+          getElementStyles();
+
           try {
-            rect = node.getBoundingClientRect();
-          } catch (e) {
-            console.error(e);
-            console.info(node.__proto__);
+            fill = getProminentColor(node);
+          } catch (error) {
+            console.log(`Count not get prominent color for image: ${node.src}`);
+            console.error(error);
+            fill = backgroundColor;
           }
+
+          type = TYPES.IMAGE;
+          break;
+        default:
+          rect = node.getBoundingClientRect();
           getElementStyles();
           fill = backgroundColor;
           break;
