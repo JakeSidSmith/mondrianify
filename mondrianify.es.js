@@ -74,6 +74,7 @@
         opacity = 1,
         visibility,
         display,
+        overflow,
         visible,
         fill
       } = parentData;
@@ -88,14 +89,30 @@
         const thisOpacity = style.getPropertyValue('opacity');
         const thisVisibility = style.getPropertyValue('visibility');
         const thisDisplay = style.getPropertyValue('display');
+        const thisOverflow = style.getPropertyValue('overflow');
+
+        const possiblyVisible = opacity > 0 &&
+          display !== 'none' &&
+          (
+            (rect.width > 0 && rect.height > 0) ||
+            overflow !== 'hidden'
+          );
 
         color = typeof thisColor === 'undefined' ? color : thisColor;
         backgroundColor = typeof thisBackgroundColor === 'undefined' ? backgroundColor : thisBackgroundColor;
         borderColor = typeof thisBorderColor === 'undefined' ? borderColor : thisBorderColor;
         borderWidth = typeof thisBorderWidth === 'undefined' ? borderWidth : thisBorderWidth;
         opacity = typeof thisOpacity === 'undefined' ? opacity : parseFloat(thisOpacity);
-        visibility = typeof thisVisibility === 'undefined' ? visibility : thisVisibility;
+        visibility = typeof thisVisibility === 'undefined' ? 'visible' : thisVisibility;
         display = typeof thisDisplay === 'undefined' ? display : thisDisplay;
+        overflow = typeof thisOverflow === 'undefined' ? 'auto' : thisOverflow;
+
+        visible = possiblyVisible &&
+          opacity > 0 &&
+          display !== 'none' &&
+          rect.width > 0 &&
+          rect.height > 0 &&
+          visibility !== 'hidden';
       }
 
       switch (node.constructor) {
@@ -162,9 +179,8 @@
         opacity,
         visibility,
         display,
-        visible: visible === false ? false : (
-          opacity > 0 && visibility !== 'hidden' && display !== 'none' && rect.width > 0 && rect.height > 0
-        ),
+        overflow,
+        visible,
         fill
       };
 
