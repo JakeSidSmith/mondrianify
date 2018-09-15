@@ -47,14 +47,16 @@
     const ctx = canvas.getContext('2d');
 
     nodeData.forEach((node) => {
-      if (node.type === TYPES.BODY) {
-        ctx.globalAlpha = 1;
-      } else {
-        ctx.globalAlpha = 0.5;
-      }
+      if (node.visible) {
+        if (node.type === TYPES.BODY) {
+          ctx.globalAlpha = 1;
+        } else {
+          ctx.globalAlpha = 0.5 * node.opacity;
+        }
 
-      ctx.fillStyle = node.fill;
-      ctx.fillRect(node.rect.x, node.rect.y, node.rect.width, node.rect.height);
+        ctx.fillStyle = node.fill;
+        ctx.fillRect(node.rect.x, node.rect.y, node.rect.width, node.rect.height);
+      }
     });
   }
 
@@ -69,6 +71,10 @@
         backgroundColor,
         borderColor,
         borderWidth,
+        opacity = 1,
+        visibility,
+        display,
+        visible,
         fill
       } = parentData;
 
@@ -79,11 +85,17 @@
         const thisBackgroundColor = style.getPropertyValue('background-color');
         const thisBorderColor = style.getPropertyValue('border-color');
         const thisBorderWidth = style.getPropertyValue('border-width');
+        const thisOpacity = style.getPropertyValue('opacity');
+        const thisVisibility = style.getPropertyValue('visibility');
+        const thisDisplay = style.getPropertyValue('display');
 
         color = typeof thisColor === 'undefined' ? color : thisColor;
         backgroundColor = typeof thisBackgroundColor === 'undefined' ? backgroundColor : thisBackgroundColor;
         borderColor = typeof thisBorderColor === 'undefined' ? borderColor : thisBorderColor;
         borderWidth = typeof thisBorderWidth === 'undefined' ? borderWidth : thisBorderWidth;
+        opacity = typeof thisOpacity === 'undefined' ? opacity : parseFloat(thisOpacity);
+        visibility = typeof thisVisibility === 'undefined' ? visibility : thisVisibility;
+        display = typeof thisDisplay === 'undefined' ? display : thisDisplay;
       }
 
       switch (node.constructor) {
@@ -147,6 +159,12 @@
         backgroundColor,
         borderColor,
         borderWidth,
+        opacity,
+        visibility,
+        display,
+        visible: visible === false ? false : (
+          opacity > 0 && visibility !== 'hidden' && display !== 'none' && rect.width > 0 && rect.height > 0
+        ),
         fill
       };
 
