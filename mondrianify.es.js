@@ -55,19 +55,17 @@
       for (let y = 0; y < canvas.height; y += 1) {
         const data = ctx.getImageData(x, y, 1, 1).data;
 
-        if (data[3] > 0) {
-          const r = roundColorPart(data[0]);
-          const g = roundColorPart(data[1]);
-          const b = roundColorPart(data[2]);
-          const a = Math.round(data[3] / 255 * 10) / 10;
+        const r = roundColorPart(data[0]);
+        const g = roundColorPart(data[1]);
+        const b = roundColorPart(data[2]);
+        const a = Math.round(data[3] / 255 * 10) / 10;
 
-          const rounded = `rgba(${r},${g},${b},${a})`;
+        const rounded = `rgba(${r},${g},${b},${a})`;
 
-          if (rounded in colorCounts) {
-            colorCounts[rounded] = colorCounts[rounded] + 1;
-          } else {
-            colorCounts[rounded] = 1;
-          }
+        if (rounded in colorCounts) {
+          colorCounts[rounded] = colorCounts[rounded] + 1;
+        } else {
+          colorCounts[rounded] = 1;
         }
       }
     }
