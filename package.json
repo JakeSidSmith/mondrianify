@@ -1,0 +1,39 @@
+{
+  "name": "mondrianify",
+  "version": "0.0.0",
+  "description": "Create images from web pages in a Mondrian-like style",
+  "main": "mondrianify.js",
+  "module": "mondrianify.es.js",
+  "scripts": {
+    "build": "babel mondrianify.es.js --out-file mondrianify.js && node scripts/update-readme.js",
+    "lint": "eslint mondrianify.es.js",
+    "test": "npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakesidsmith/mondrianify.git"
+  },
+  "keywords": [
+    "mondrian",
+    "art",
+    "squares",
+    "rectangles",
+    "image",
+    "images",
+    "generate",
+    "generator"
+  ],
+  "author": "Jake 'Sid' Smith",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jakesidsmith/mondrianify/issues"
+  },
+  "homepage": "https://github.com/jakesidsmith/mondrianify#readme",
+  "dependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.1",
+    "@babel/preset-env": "^7.0.0",
+    "babel-preset-minify": "^0.4.3",
+    "eslint-config-jakesidsmith": "github:jakesidsmith/eslint-config-jakesidsmith"
+  }
+}
