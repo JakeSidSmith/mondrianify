@@ -164,6 +164,8 @@
     console.log('Mondrianify nodes', nodeData);
   }
 
+  window.scrollTo(0, 0);
+
   collectNodeData();
 
 })();
