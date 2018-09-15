@@ -16,6 +16,10 @@ Go to any website, and click on the bookmarklet!
 
 Once you've got your mondrianified image you can simply right click on it and save it as an image, if you wish.
 
+## Examples
+
+![Examples 1](images/examples-1.jpg)
+
 ## Browser support
 
 Currently only supports the latest few versions of Chrome, but may work in other browsers.
